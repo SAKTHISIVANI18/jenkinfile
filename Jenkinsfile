@@ -21,7 +21,7 @@ pipeline {
 
         
         stage ('static code analysis'){
-            steps{
+
 
 def urlcomponents = env.CHANGE_URL.split("/")
 def org = urlcomponents[3]
