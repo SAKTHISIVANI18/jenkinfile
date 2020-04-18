@@ -15,17 +15,15 @@ pipeline {
             steps {
 
 
-                    sh './mvn clean package'
+                    sh './mvnw clean package'
 
             }
 
          }
       
          stage('Quality Analysis') {
-            parallel {
-                
-                stage('Integration Test') {
-                    agent any  
+            
+                     
                     steps {
                         echo 'Run integration tests here...'
                     }
@@ -48,5 +46,4 @@ pipeline {
                 }
             }
         }
-    }
-}
+    
