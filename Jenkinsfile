@@ -10,33 +10,49 @@ pipeline {
             git  'https://github.com/SAKTHISIVANI18/jenkinfile.git'
             }
         }
-        stage('build'){
-            steps{
-            
-            
-         withSonarQubeEnv('SonarCloud') {
-    sh "./mvnw org.jacoco:jacoco-maven-plugin:prepare-agent verify \
-        sonar:sonar -Dsonar.branch.name=${env.BRANCH_NAME}"
-}
-            }
-        }
+       stage ('package') {
 
-        
-        stage ('static code analysis'){
-            steps{
+            steps {
 
 
-def urlcomponents = env.CHANGE_URL.split("/")
-def org = urlcomponents[3]
-def repo = urlcomponents[4]
-withSonarQubeEnv('SonarCloud') {
-    sh "./mvnw sonar:sonar \
-    -Dsonar.pullrequest.provider=GitHub \
-    -Dsonar.pullrequest.github.repository=${org}/${repo} \
-    -Dsonar.pullrequest.key=${env.CHANGE_ID} \
-    -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH}"
-}
+                    sh './mvnw clean package'
+
             }
+
+         }
+      stage ('sonar') {
+
+          steps {
+
+
+                sh 'sonar-scanner'
+
+           }
+      }
+         stage('Quality Analysis') {
+            parallel {
+                
+                stage('Integration Test') {
+                    agent any  
+                    steps {
+                        echo 'Run integration tests here...'
+                    }
+                }
+                stage('Sonar Scan') {
+                    agent {
+                        docker {
+                           
+                            reuseNode true
+                            image 'maven:3.5.0-jdk-8'
+                        }
+                    }
+                    environment {
+                       
+                        SONAR = credentials('sonar')
+                    }
+                    steps {
+                        sh 'mvn sonar:sonar -Dsonar.login=$SONAR_PSW'
+                    }
+                }
             }
-        }
         }
