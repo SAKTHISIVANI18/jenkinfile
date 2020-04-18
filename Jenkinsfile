@@ -15,20 +15,12 @@ pipeline {
             steps {
 
 
-                    sh './mvnw clean package'
+                    sh './mvn clean package'
 
             }
 
          }
-      stage ('sonar') {
-
-          steps {
-
-
-                sh 'sonar-scanner'
-
-           }
-      }
+      
          stage('Quality Analysis') {
             parallel {
                 
@@ -43,7 +35,7 @@ pipeline {
                         docker {
                            
                             reuseNode true
-                            image 'maven:3.5.0-jdk-8'
+                            image 'maven:3.6.3-jdk-13.0.1'
                         }
                     }
                     environment {
