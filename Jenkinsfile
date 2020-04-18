@@ -11,6 +11,7 @@ pipeline {
             }
         }
         stage('build'){
+            steps{
             
             
          withSonarQubeEnv('SonarCloud') {
@@ -18,9 +19,11 @@ pipeline {
         sonar:sonar -Dsonar.branch.name=${env.BRANCH_NAME}"
 }
             }
+        }
 
         
         stage ('static code analysis'){
+            steps{
 
 
 def urlcomponents = env.CHANGE_URL.split("/")
@@ -33,6 +36,7 @@ withSonarQubeEnv('SonarCloud') {
     -Dsonar.pullrequest.key=${env.CHANGE_ID} \
     -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH}"
 }
+            }
             }
         }
         }
